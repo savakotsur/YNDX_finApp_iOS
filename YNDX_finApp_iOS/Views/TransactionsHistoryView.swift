@@ -29,7 +29,34 @@ struct TransactionsHistoryView: View {
                     Text("Конец")
                     Spacer()
                     DatePickerCompactRow(selectedDate: $vm.endDate)
-                    
+                }
+                HStack {
+                    Text("Сортировать")
+                    Spacer()
+                    Menu {
+                        Button {
+                            vm.sortByDate()
+                        } label: {
+                            Text("Дате")
+                            Image(systemName: "clock")
+                        }
+                        Button {
+                            vm.sortByAmount()
+                        } label: {
+                            Text("Сумме")
+                            Image(systemName: "rublesign")
+                        }
+                    } label: {
+                        HStack {
+                            Image(systemName: "arrow.up.arrow.down")
+                            Text("по:")
+                        }
+                        .padding(5)
+                        .foregroundStyle(.black)
+                        .frame(minWidth: 1)
+                        .background(Color.lightGreen)
+                        .clipShape(RoundedRectangle(cornerSize: .init(width: 8, height: 8)))
+                    }
                 }
                 HStack {
                     Text("Сумма")
@@ -57,26 +84,6 @@ struct TransactionsHistoryView: View {
                         Text("Назад")
                     }
                     .foregroundStyle(.toolbarAccent)
-                }
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    Text("Сортировать по: ")
-                    Button {
-                        vm.sortByDate()
-                    } label: {
-                        Text("Дате")
-                        Image(systemName: "clock")
-                    }
-                    Button {
-                        vm.sortByAmount()
-                    } label: {
-                        Text("Сумме")
-                        Image(systemName: "rublesign")
-                    }
-                } label: {
-                    Image(systemName: "arrow.up.arrow.down")
-                        .foregroundStyle(.toolbarAccent)
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {

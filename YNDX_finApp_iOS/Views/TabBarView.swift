@@ -59,7 +59,7 @@ struct TabBarView: View {
 }
 
 
-//MARK: Preview оставлен для удобства проверки - будет убран в следующем дз
+//MARK: Preview оставлен для удобства проверки - будет убран в будующем
 #Preview {
     TabBarView()
 }
