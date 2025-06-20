@@ -11,7 +11,7 @@ import SwiftUI
 struct YNDX_finApp_iOSApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            TabBarView()
         }
     }
 }
