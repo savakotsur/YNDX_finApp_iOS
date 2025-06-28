@@ -30,7 +30,9 @@ struct TabBarView: View {
             }
             .toolbarBackground(.visible, for: .tabBar)
             
-            Text("Счет")
+            NavigationStack {
+                AccountView()
+            }
                 .tabItem {
                     Image("calculator")
                         .renderingMode(.template)
