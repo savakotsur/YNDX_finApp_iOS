@@ -40,7 +40,9 @@ struct TabBarView: View {
                 }
                 .toolbarBackground(.visible, for: .tabBar)
             
-            Text("Статьи")
+            NavigationStack {
+                MyCategoriesView()
+            }
                 .tabItem {
                     Image("bar-chart-side") 
                         .renderingMode(.template)
