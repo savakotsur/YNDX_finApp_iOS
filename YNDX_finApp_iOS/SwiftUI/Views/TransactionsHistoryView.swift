@@ -87,9 +87,11 @@ struct TransactionsHistoryView: View {
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    print("тут будет анализ")
-                } label: {
+                NavigationLink(destination:
+                                AnalysisView(direction: direction)
+                    .toolbar(.hidden)
+                    .background(Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+                ) {
                     Image(systemName: "document")
                         .foregroundStyle(.toolbarAccent)
                 }
