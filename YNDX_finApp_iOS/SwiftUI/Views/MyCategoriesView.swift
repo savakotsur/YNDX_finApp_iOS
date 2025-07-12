@@ -33,9 +33,3 @@ struct MyCategoriesView: View {
         .navigationTitle("Мои статьи")
     }
 }
-
-#Preview {
-    NavigationStack {
-        MyCategoriesView()
-    }
-}

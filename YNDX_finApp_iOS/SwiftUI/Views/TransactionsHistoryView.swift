@@ -66,7 +66,11 @@ struct TransactionsHistoryView: View {
             }
             
             TransactionsSectionView(
-                transactions: vm.transactions,
+                onFinishEditing: {
+                    Task {
+                        await vm.fetchTransactions()
+                    }
+                }, transactions: vm.transactions,
                 isOutcome: true,
                 getEmoji: { vm.getEmoji(for: $0) },
                 getCategoryName: { vm.getCategoryName(for: $0) }

@@ -118,3 +118,7 @@ extension Transaction {
         )
     }
 }
+
+extension Transaction: Identifiable {}
+
+extension Transaction: Equatable {}

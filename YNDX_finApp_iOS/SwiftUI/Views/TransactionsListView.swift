@@ -10,6 +10,7 @@ import SwiftUI
 struct TransactionsListView: View {
     let direction: Direction
     @State var vm: TransactionsViewModel
+    @State private var showCreateModal = false
     
     init(direction: Direction) {
         self.direction = direction
@@ -28,7 +29,11 @@ struct TransactionsListView: View {
                 }
 
                 TransactionsSectionView(
-                    transactions: vm.transactions,
+                    onFinishEditing: {
+                        Task {
+                            await vm.fetchTransactions()
+                        }
+                    }, transactions: vm.transactions,
                     isOutcome: direction == .outcome,
                     getEmoji: { vm.getEmoji(for: $0) },
                     getCategoryName: { vm.getCategoryName(for: $0) }
@@ -46,8 +51,7 @@ struct TransactionsListView: View {
             }
             
             Button {
-                //TODO: в следующей домашке тут будет экран добавления
-                print("Добавить transaction")
+                showCreateModal = true
             } label: {
                 Image(systemName: "plus")
                     .font(.title2)
@@ -58,6 +62,14 @@ struct TransactionsListView: View {
                     .shadow(radius: 2)
             }
             .padding()
+            .fullScreenCover(isPresented: $showCreateModal) {
+                OperationView(direction: direction)
+                    .onDisappear {
+                        Task {
+                            await vm.fetchTransactions()
+                        }
+                    }
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ import UIKit
 class AnalysisViewController: UIViewController {
     let direction: Direction
     var onBack: (() -> Void)?
+    var onSelectTransaction: ((Transaction) -> Void)?
     // MARK: - UI
     private let tableView = UITableView(frame: .zero, style: .insetGrouped)
     
@@ -90,7 +91,7 @@ class AnalysisViewController: UIViewController {
     }
     
     // MARK: - Data Loading & Logic
-    private func loadData() {
+    func loadData() {
         Task {
             do {
                 let categories = try await CategoriesService.shared.categories(direction: direction)
@@ -238,6 +239,12 @@ extension AnalysisViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return UITableView.automaticDimension
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard indexPath.section == 1 else { return }
+        let transaction = filteredTransactions[indexPath.row]
+        onSelectTransaction?(transaction)
     }
 }
 
