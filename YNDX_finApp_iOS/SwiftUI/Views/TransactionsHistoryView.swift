@@ -66,7 +66,11 @@ struct TransactionsHistoryView: View {
             }
             
             TransactionsSectionView(
-                transactions: vm.transactions,
+                onFinishEditing: {
+                    Task {
+                        await vm.fetchTransactions()
+                    }
+                }, transactions: vm.transactions,
                 isOutcome: true,
                 getEmoji: { vm.getEmoji(for: $0) },
                 getCategoryName: { vm.getCategoryName(for: $0) }
@@ -87,9 +91,11 @@ struct TransactionsHistoryView: View {
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    print("тут будет анализ")
-                } label: {
+                NavigationLink(destination:
+                                AnalysisView(direction: direction)
+                    .toolbar(.hidden)
+                    .background(Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+                ) {
                     Image(systemName: "document")
                         .foregroundStyle(.toolbarAccent)
                 }

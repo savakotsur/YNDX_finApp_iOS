@@ -30,11 +30,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		E2C4F3E32DFC646E0003631C /* YNDX_finApp_iOS */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = YNDX_finApp_iOS;
-			sourceTree = "<group>";
-		};
 		E2C4F3F12DFC64700003631C /* YNDX_finApp_iOSTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = YNDX_finApp_iOSTests;
@@ -43,6 +38,11 @@
 		E2C4F3FB2DFC64700003631C /* YNDX_finApp_iOSUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = YNDX_finApp_iOSUITests;
+			sourceTree = "<group>";
+		};
+		E2C4F7CA2E2147170003631C /* YNDX_finApp_iOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = YNDX_finApp_iOS;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,7 +75,7 @@
 		E2C4F3D82DFC646E0003631C = {
 			isa = PBXGroup;
 			children = (
-				E2C4F3E32DFC646E0003631C /* YNDX_finApp_iOS */,
+				E2C4F7CA2E2147170003631C /* YNDX_finApp_iOS */,
 				E2C4F3F12DFC64700003631C /* YNDX_finApp_iOSTests */,
 				E2C4F3FB2DFC64700003631C /* YNDX_finApp_iOSUITests */,
 				E2C4F3E22DFC646E0003631C /* Products */,
@@ -108,7 +108,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				E2C4F3E32DFC646E0003631C /* YNDX_finApp_iOS */,
+				E2C4F7CA2E2147170003631C /* YNDX_finApp_iOS */,
 			);
 			name = YNDX_finApp_iOS;
 			packageProductDependencies = (

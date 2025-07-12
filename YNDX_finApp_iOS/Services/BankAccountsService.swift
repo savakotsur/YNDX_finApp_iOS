@@ -8,6 +8,8 @@
 import Foundation
 
 final class BankAccountsService {
+    static var shared = BankAccountsService()
+    
     private var account: BankAccount = BankAccount(
         id: 1,
         userId: 42,

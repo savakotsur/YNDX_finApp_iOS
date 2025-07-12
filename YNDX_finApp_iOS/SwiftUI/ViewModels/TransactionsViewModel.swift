@@ -70,6 +70,11 @@ final class TransactionsViewModel {
         totalAmount = transactions.reduce(Decimal(0)) { $0 + $1.amount }
     }
     
+    func fetchTransactions() async {
+        await loadTransactions()
+        calculateTotal()
+    }
+    
     func getCategoryName(for categoryId: Int) -> String {
         let name = matchingCategories.first(where: { $0.id == categoryId })?.name ?? " "
         return name
