@@ -15,9 +15,7 @@ final class NetworkClient {
     private let decoder = JSONDecoder()
     
     private init() {
-        guard let token = "подставьте токен", !token.isEmpty else {
-            fatalError("API_TOKEN is missing")
-        }
+        let token = "подставьте токен сюда"
         self.token = token
     }
     
