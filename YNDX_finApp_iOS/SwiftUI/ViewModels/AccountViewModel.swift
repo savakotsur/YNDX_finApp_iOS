@@ -21,6 +21,15 @@ enum Currency: String, CaseIterable, Identifiable {
         case .eur: return "Евро €"
         }
     }
+    
+    static func from(code: String) -> Currency {
+        switch code.uppercased() {
+        case "RUB": return .rub
+        case "USD": return .usd
+        case "EUR": return .eur
+        default: return .rub
+        }
+    }
 }
 
 @Observable
@@ -31,6 +40,7 @@ class AccountViewModel {
     var showCurrencyPicker: Bool = false
     var isBalanceHidden: Bool = false
     var balanceInput: String = ""
+    var accountId: Int = 1 
     
     var currencies: [Currency] { Currency.allCases }
     
@@ -74,6 +84,20 @@ class AccountViewModel {
     }
     
     func refresh() {
-        //MARK: логика обновления будет здесь
+        Task {
+            await loadAccount()
+        }
+    }
+    
+    func loadAccount(id: Int? = nil) async {
+        let idToLoad = id ?? accountId
+        do {
+            let account = try await BankAccountsService.shared.fetchAccount(id: idToLoad)
+            self.balance = account.balance
+            self.currency = Currency.from(code: account.currency)
+            self.accountId = account.id
+        } catch {
+            print("Ошибка загрузки аккаунта: \(error)")
+        }
     }
 }

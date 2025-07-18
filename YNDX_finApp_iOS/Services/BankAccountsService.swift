@@ -8,23 +8,18 @@
 import Foundation
 
 final class BankAccountsService {
-    static var shared = BankAccountsService()
+    static let shared = BankAccountsService()
+    private let networkClient = NetworkClient.shared
     
-    private var account: BankAccount = BankAccount(
-        id: 1,
-        userId: 42,
-        name: "Основной счёт",
-        balance: Decimal(string: "10000.00")!,
-        currency: "RUB",
-        createdAt: ISO8601DateFormatter().date(from: "2025-01-01T00:00:00Z")!,
-        updatedAt: ISO8601DateFormatter().date(from: "2025-01-01T00:00:00Z")!
-    )
-    
-    func fetchAccount() async throws -> BankAccount {
-        account
+    func fetchAccount(id: Int) async throws -> BankAccount {
+        let endpoint = "accounts/\(id)"
+        return try await networkClient.request(endpoint: endpoint, method: "GET", requestBody: Optional<EmptyRequest>.none) as BankAccount
     }
     
     func updateAccount(_ updated: BankAccount) async throws {
-        account = updated
+        let endpoint = "accounts/\(updated.id)"
+        let _: BankAccount = try await networkClient.request(endpoint: endpoint, method: "PUT", requestBody: updated)
     }
 }
+
+private struct EmptyRequest: Encodable {}

@@ -8,22 +8,18 @@
 import Foundation
 
 final class CategoriesService {
-    static var shared = CategoriesService()
-    
-    private let mockCategories: [Category] = [
-        Category(id: 1, name: "Продукты", icon: "🛒", direction: .outcome),
-        Category(id: 2, name: "Транспорт", icon: "🚗", direction: .outcome),
-        Category(id: 3, name: "Развлечения", icon: "🎮", direction: .outcome),
-        Category(id: 4, name: "Кафе", icon: "☕️", direction: .outcome),
-        Category(id: 5, name: "Зарплата", icon: "💰", direction: .income),
-        Category(id: 6, name: "Подарки", icon: "🎁", direction: .income)
-    ]
+    static let shared = CategoriesService()
+    private let networkClient = NetworkClient.shared
     
     func categories() async throws -> [Category] {
-        mockCategories
+        let endpoint = "categories"
+        return try await networkClient.request(endpoint: endpoint, method: "GET", requestBody: Optional<EmptyRequest>.none) as [Category]
     }
     
     func categories(direction: Direction) async throws -> [Category] {
-        mockCategories.filter { $0.direction == direction }
+        let all = try await categories()
+        return all.filter { $0.direction == direction }
     }
 }
+
+private struct EmptyRequest: Encodable {}

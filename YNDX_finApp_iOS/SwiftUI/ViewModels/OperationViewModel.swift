@@ -39,7 +39,7 @@ final class OperationViewModel {
         
         Task {
             await loadCategories()
-            accountId = try await BankAccountsService.shared.fetchAccount().id
+            accountId = try await BankAccountsService.shared.fetchAccount(id: 1).id
         }
     }
     
