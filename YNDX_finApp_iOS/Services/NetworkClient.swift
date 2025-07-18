@@ -15,9 +15,8 @@ final class NetworkClient {
     private let decoder = JSONDecoder()
     
     private init() {
-        guard let token = Bundle.main.object(forInfoDictionaryKey: "API_TOKEN") as? String, !token.isEmpty else {
-            print(Bundle.main.object(forInfoDictionaryKey: "API_TOKEN"))
-            fatalError("API_TOKEN is missing in Info.plist")
+        guard let token = "подставьте токен", !token.isEmpty else {
+            fatalError("API_TOKEN is missing")
         }
         self.token = token
     }
