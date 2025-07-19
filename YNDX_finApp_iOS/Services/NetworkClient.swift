@@ -17,6 +17,15 @@ final class NetworkClient {
     private init() {
         let token = "подставьте токен сюда"
         self.token = token
+        
+        // Настройка для работы с датами
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        decoder.dateDecodingStrategy = .formatted(dateFormatter)
+        encoder.dateEncodingStrategy = .formatted(dateFormatter)
+        
+        // Настройка для работы с Decimal
+        decoder.nonConformingFloatDecodingStrategy = .convertFromString(positiveInfinity: "+Infinity", negativeInfinity: "-Infinity", nan: "NaN")
     }
     
     enum NetworkError: Error {
@@ -32,7 +41,8 @@ final class NetworkClient {
         method: String = "GET",
         requestBody: Request? = nil
     ) async throws -> Response {
-        var urlRequest = URLRequest(url: baseURL.appendingPathComponent(endpoint))
+        let fullURL = URL(string: endpoint, relativeTo: baseURL)!
+        var urlRequest = URLRequest(url: fullURL)
         urlRequest.httpMethod = method
         urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -67,6 +77,7 @@ final class NetworkClient {
         }
         
         guard (200...299).contains(httpResponse.statusCode) else {
+            print("HTTP Error \(httpResponse.statusCode): \(String(data: data, encoding: .utf8) ?? "No data")")
             throw NetworkError.httpError(code: httpResponse.statusCode, data: data)
         }
         
@@ -77,6 +88,8 @@ final class NetworkClient {
                         let decoded = try self.decoder.decode(Response.self, from: data)
                         continuation.resume(returning: decoded)
                     } catch {
+                        print("Decoding error: \(error)")
+                        print("Response data: \(String(data: data, encoding: .utf8) ?? "No data")")
                         continuation.resume(throwing: NetworkError.decoding(error))
                     }
                 }

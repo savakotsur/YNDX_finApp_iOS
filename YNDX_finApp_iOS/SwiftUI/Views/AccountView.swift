@@ -96,14 +96,17 @@ struct AccountView: View {
         .refreshable {
             viewModel.refresh()
         }
+        .onAppear {
+            viewModel.refresh()
+        }
         .background(Color(.systemGray6))
         .navigationTitle("Мой счет")
         .toolbar {
             if viewModel.isEditing {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        withAnimation {
-                            viewModel.save()
+                        Task {
+                            await viewModel.save()
                         }
                     } label: {
                         Text("Cохранить")

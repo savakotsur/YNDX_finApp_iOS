@@ -12,21 +12,31 @@ final class TransactionsService {
     private let networkClient = NetworkClient.shared
     
     // MARK: - Получение транзакций за период
-    func transactions(from startDate: Date, to endDate: Date) async throws -> [Transaction] {
-        struct Query: Encodable {
-            let from: String
-            let to: String
-        }
-        let dateFormatter = ISO8601DateFormatter()
-        let query = Query(from: dateFormatter.string(from: startDate), to: dateFormatter.string(from: endDate))
-        let endpoint = "transactions?from=\(query.from)&to=\(query.to)"
-        return try await networkClient.request(endpoint: endpoint, method: "GET", requestBody: Optional<Query>.none) as [Transaction]
+    func transactions(from startDate: Date, to endDate: Date, accountId: Int = 1) async throws -> [Transaction] {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let startDateString = dateFormatter.string(from: startDate)
+        let endDateString = dateFormatter.string(from: endDate)
+        let path = "transactions/account/\(accountId)/period"
+        let query = "startDate=\(startDateString)&endDate=\(endDateString)"
+        let endpoint = "\(path)?\(query)"
+        return try await networkClient.request(endpoint: endpoint, method: "GET", requestBody: Optional<EmptyRequest>.none) as [Transaction]
     }
 
     // MARK: - Добавление транзакции
     func addTransaction(_ transaction: Transaction) async throws {
         let endpoint = "transactions"
-        let _: Transaction = try await networkClient.request(endpoint: endpoint, method: "POST", requestBody: transaction)
+        
+        // Создаем запрос в правильном формате для API
+        let createRequest = CreateTransactionRequest(
+            accountId: transaction.accountId,
+            categoryId: transaction.categoryId,
+            amount: String(format: "%.2f", NSDecimalNumber(decimal: transaction.amount).doubleValue),
+            transactionDate: transaction.transactionDate,
+            comment: transaction.comment
+        )
+        
+        let _: Transaction = try await networkClient.request(endpoint: endpoint, method: "POST", requestBody: createRequest)
     }
 
     // MARK: - Обновление транзакции

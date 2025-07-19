@@ -16,6 +16,94 @@ struct Transaction: Codable {
     let comment: String?
     let createdAt: Date
     let updatedAt: Date
+    
+    enum CodingKeys: String, CodingKey {
+        case id, account, category, amount, transactionDate, comment, createdAt, updatedAt
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(Int.self, forKey: .id)
+        
+        // Обработка amount как строки
+        if let amountString = try? container.decode(String.self, forKey: .amount) {
+            amount = Decimal(string: amountString) ?? 0
+        } else {
+            amount = try container.decode(Decimal.self, forKey: .amount)
+        }
+        
+        // Обработка дат как строк
+        if let transactionDateString = try? container.decode(String.self, forKey: .transactionDate) {
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            transactionDate = formatter.date(from: transactionDateString) ?? Date()
+        } else {
+            transactionDate = try container.decode(Date.self, forKey: .transactionDate)
+        }
+        
+        comment = try container.decodeIfPresent(String.self, forKey: .comment)
+        
+        if let createdAtString = try? container.decode(String.self, forKey: .createdAt) {
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            createdAt = formatter.date(from: createdAtString) ?? Date()
+        } else {
+            createdAt = try container.decode(Date.self, forKey: .createdAt)
+        }
+        
+        if let updatedAtString = try? container.decode(String.self, forKey: .updatedAt) {
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            updatedAt = formatter.date(from: updatedAtString) ?? Date()
+        } else {
+            updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        }
+        
+        // Извлекаем accountId из вложенного объекта account
+        let accountContainer = try container.nestedContainer(keyedBy: AccountCodingKeys.self, forKey: .account)
+        accountId = try accountContainer.decode(Int.self, forKey: .id)
+        
+        // Извлекаем categoryId из вложенного объекта category
+        let categoryContainer = try container.nestedContainer(keyedBy: CategoryCodingKeys.self, forKey: .category)
+        categoryId = try categoryContainer.decode(Int.self, forKey: .id)
+    }
+    
+    private enum AccountCodingKeys: String, CodingKey {
+        case id
+    }
+    
+    private enum CategoryCodingKeys: String, CodingKey {
+        case id
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(amount, forKey: .amount)
+        try container.encode(transactionDate, forKey: .transactionDate)
+        try container.encodeIfPresent(comment, forKey: .comment)
+        try container.encode(createdAt, forKey: .createdAt)
+        try container.encode(updatedAt, forKey: .updatedAt)
+        
+        // Кодируем accountId как вложенный объект account
+        var accountContainer = container.nestedContainer(keyedBy: AccountCodingKeys.self, forKey: .account)
+        try accountContainer.encode(accountId, forKey: .id)
+        
+        // Кодируем categoryId как вложенный объект category
+        var categoryContainer = container.nestedContainer(keyedBy: CategoryCodingKeys.self, forKey: .category)
+        try categoryContainer.encode(categoryId, forKey: .id)
+    }
+    
+    init(id: Int, accountId: Int, categoryId: Int, amount: Decimal, transactionDate: Date, comment: String?, createdAt: Date, updatedAt: Date) {
+        self.id = id
+        self.accountId = accountId
+        self.categoryId = categoryId
+        self.amount = amount
+        self.transactionDate = transactionDate
+        self.comment = comment
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+    }
 }
 
 extension Transaction {
@@ -122,3 +210,12 @@ extension Transaction {
 extension Transaction: Identifiable {}
 
 extension Transaction: Equatable {}
+
+// Модель для создания транзакции
+struct CreateTransactionRequest: Codable {
+    let accountId: Int
+    let categoryId: Int
+    let amount: String
+    let transactionDate: Date
+    let comment: String?
+}

@@ -49,11 +49,26 @@ class AccountViewModel {
         currency = newCurrency
     }
     
-    func save() {
+    func save() async {
         if let value = Int(balanceInput) {
             balance = Decimal(value)
         }
         isEditing = false
+        
+        // Отправляем обновление на сервер
+        do {
+            let updatedAccount = BankAccount(
+                id: accountId,
+                name: "Main Account",
+                balance: balance,
+                currency: currency.rawValue,
+                createdAt: Date(),
+                updatedAt: Date()
+            )
+            try await BankAccountsService.shared.updateAccount(updatedAccount)
+        } catch {
+            print("Ошибка обновления аккаунта: \(error)")
+        }
     }
     
     func startEditing() {
