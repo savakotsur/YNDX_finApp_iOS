@@ -18,7 +18,7 @@ struct Transaction: Codable {
     let updatedAt: Date
     
     enum CodingKeys: String, CodingKey {
-        case id, account, category, amount, transactionDate, comment, createdAt, updatedAt
+        case id, account, accountId, category, categoryId, amount, transactionDate, comment, createdAt, updatedAt
     }
     
     init(from decoder: Decoder) throws {
@@ -59,13 +59,19 @@ struct Transaction: Codable {
             updatedAt = try container.decode(Date.self, forKey: .updatedAt)
         }
         
-        // Извлекаем accountId из вложенного объекта account
-        let accountContainer = try container.nestedContainer(keyedBy: AccountCodingKeys.self, forKey: .account)
-        accountId = try accountContainer.decode(Int.self, forKey: .id)
+        // accountId
+        if let accountContainer = try? container.nestedContainer(keyedBy: AccountCodingKeys.self, forKey: .account) {
+            accountId = try accountContainer.decode(Int.self, forKey: .id)
+        } else {
+            accountId = try container.decode(Int.self, forKey: .accountId)
+        }
         
         // Извлекаем categoryId из вложенного объекта category
-        let categoryContainer = try container.nestedContainer(keyedBy: CategoryCodingKeys.self, forKey: .category)
-        categoryId = try categoryContainer.decode(Int.self, forKey: .id)
+        if let categoryContainer = try? container.nestedContainer(keyedBy: CategoryCodingKeys.self, forKey: .category) {
+            categoryId = try categoryContainer.decode(Int.self, forKey: .id)
+        } else {
+            categoryId = try container.decode(Int.self, forKey: .categoryId)
+        }
     }
     
     private enum AccountCodingKeys: String, CodingKey {
@@ -217,5 +223,5 @@ struct CreateTransactionRequest: Codable {
     let categoryId: Int
     let amount: String
     let transactionDate: Date
-    let comment: String?
+    let comment: String
 }

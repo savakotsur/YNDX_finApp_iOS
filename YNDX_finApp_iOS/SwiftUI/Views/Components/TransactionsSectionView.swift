@@ -8,13 +8,11 @@
 import SwiftUI
 
 struct TransactionsSectionView: View {
-    let onFinishEditing: () -> Void
     let transactions: [Transaction]
     let isOutcome: Bool
     let getEmoji: (Int) -> String
     let getCategoryName: (Int) -> String
-    
-    @State private var selectedTransaction: Transaction?
+    let onTap: (Transaction) -> Void
     
     var body: some View {
         Section("ОПЕРАЦИИ") {
@@ -47,17 +45,9 @@ struct TransactionsSectionView: View {
                 .padding(.vertical, 0.5)
                 .contentShape(Rectangle())
                 .onTapGesture {
-                        selectedTransaction = transaction
+                    onTap(transaction)
                 }
             }
-        }
-        //MARK: Я знаю что оно работает очень криво, я 3 часа сидел над этим и не смог пофиксить
-        .fullScreenCover(item: $selectedTransaction) { transaction in
-            OperationView(direction: isOutcome ? .outcome : .income, transaction: transaction)
-                .onDisappear {
-                    selectedTransaction = nil
-                    onFinishEditing()
-                }
         }
     }
 }

@@ -40,6 +40,11 @@ class AnalysisViewController: UIViewController {
         loadData()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadData()
+    }
+
     init(direction: Direction) {
         self.direction = direction
         super.init(nibName: nil, bundle: nil)
@@ -97,7 +102,8 @@ class AnalysisViewController: UIViewController {
                 let categories = try await CategoriesService.shared.categories(direction: direction)
                 self.categories = categories
                 let categoryIds = Set(categories.map { $0.id })
-                let all = try await TransactionsService.shared.transactions(from: startDate, to: endDate)
+                let accountID = try await BankAccountsService.shared.fetchAccount().first?.id ?? 95
+                let all = try await TransactionsService.shared.transactions(from: startDate, to: endDate, accountId: accountID)
                 let filtered = all.filter { categoryIds.contains($0.categoryId) }
                 self.allTransactions = filtered
                 self.applyFiltersAndSort()

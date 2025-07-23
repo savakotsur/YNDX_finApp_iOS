@@ -11,9 +11,9 @@ final class BankAccountsService {
     static let shared = BankAccountsService()
     private let networkClient = NetworkClient.shared
     
-    func fetchAccount(id: Int) async throws -> BankAccount {
-        let endpoint = "accounts/\(id)"
-        return try await networkClient.request(endpoint: endpoint, method: "GET", requestBody: Optional<EmptyRequest>.none) as BankAccount
+    func fetchAccount() async throws -> [BankAccount] {
+        let endpoint = "accounts"
+        return try await networkClient.request(endpoint: endpoint, method: "GET", requestBody: Optional<EmptyRequest>.none) as [BankAccount]
     }
     
     func updateAccount(_ updated: BankAccount) async throws {

@@ -12,7 +12,7 @@ final class TransactionsService {
     private let networkClient = NetworkClient.shared
     
     // MARK: - Получение транзакций за период
-    func transactions(from startDate: Date, to endDate: Date, accountId: Int = 1) async throws -> [Transaction] {
+    func transactions(from startDate: Date, to endDate: Date, accountId: Int) async throws -> [Transaction] {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         let startDateString = dateFormatter.string(from: startDate)
@@ -33,7 +33,7 @@ final class TransactionsService {
             categoryId: transaction.categoryId,
             amount: String(format: "%.2f", NSDecimalNumber(decimal: transaction.amount).doubleValue),
             transactionDate: transaction.transactionDate,
-            comment: transaction.comment
+            comment: transaction.comment ?? ""
         )
         
         let _: Transaction = try await networkClient.request(endpoint: endpoint, method: "POST", requestBody: createRequest)
@@ -42,7 +42,14 @@ final class TransactionsService {
     // MARK: - Обновление транзакции
     func updateTransaction(_ transaction: Transaction) async throws {
         let endpoint = "transactions/\(transaction.id)"
-        let _: Transaction = try await networkClient.request(endpoint: endpoint, method: "PUT", requestBody: transaction)
+        let updateRequest = CreateTransactionRequest(
+            accountId: transaction.accountId,
+            categoryId: transaction.categoryId,
+            amount: String(format: "%.2f", NSDecimalNumber(decimal: transaction.amount).doubleValue),
+            transactionDate: transaction.transactionDate,
+            comment: transaction.comment ?? ""
+        )
+        let _: Transaction = try await networkClient.request(endpoint: endpoint, method: "PUT", requestBody: updateRequest)
     }
 
     // MARK: - Удаление транзакции
@@ -54,4 +61,6 @@ final class TransactionsService {
 
 // MARK: - Вспомогательные типы для пустых запросов/ответов
 private struct EmptyRequest: Encodable {}
-private struct EmptyResponse: Decodable {}
+private struct EmptyResponse: Decodable {
+    init(from decoder: Decoder) throws {}
+}

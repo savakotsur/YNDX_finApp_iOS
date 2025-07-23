@@ -15,12 +15,15 @@ final class NetworkClient {
     private let decoder = JSONDecoder()
     
     private init() {
-        let token = "подставьте токен сюда"
+        let token = "FmamhAubQbdv85BDY2IkOdK5"
         self.token = token
         
         // Настройка для работы с датами
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        dateFormatter.calendar = Calendar(identifier: .iso8601)
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX"
         decoder.dateDecodingStrategy = .formatted(dateFormatter)
         encoder.dateEncodingStrategy = .formatted(dateFormatter)
         
@@ -50,16 +53,13 @@ final class NetworkClient {
         
         if let body = requestBody {
             do {
-                urlRequest.httpBody = try await withCheckedThrowingContinuation { continuation in
-                    DispatchQueue.global().async {
-                        do {
-                            let data = try self.encoder.encode(body)
-                            continuation.resume(returning: data)
-                        } catch {
-                            continuation.resume(throwing: NetworkError.encoding(error))
-                        }
-                    }
+                let encodedData: Data
+                do {
+                    encodedData = try self.encoder.encode(body)
+                } catch {
+                    throw NetworkError.encoding(error)
                 }
+                urlRequest.httpBody = encodedData
             } catch {
                 throw error
             }
@@ -84,6 +84,15 @@ final class NetworkClient {
         do {
             return try await withCheckedThrowingContinuation { continuation in
                 DispatchQueue.global().async {
+                    // Prevent decoding empty data, regardless of Response type
+                    guard !data.isEmpty else {
+                        continuation.resume(throwing: NetworkError.decoding(
+                            DecodingError.dataCorrupted(
+                                .init(codingPath: [], debugDescription: "Received empty response data but expected JSON.")
+                            )
+                        ))
+                        return
+                    }
                     do {
                         let decoded = try self.decoder.decode(Response.self, from: data)
                         continuation.resume(returning: decoded)

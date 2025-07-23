@@ -40,7 +40,7 @@ class AccountViewModel {
     var showCurrencyPicker: Bool = false
     var isBalanceHidden: Bool = false
     var balanceInput: String = ""
-    var accountId: Int = 1 
+    var accountId: Int = 1
     
     var currencies: [Currency] { Currency.allCases }
     
@@ -105,9 +105,11 @@ class AccountViewModel {
     }
     
     func loadAccount(id: Int? = nil) async {
-        let idToLoad = id ?? accountId
         do {
-            let account = try await BankAccountsService.shared.fetchAccount(id: idToLoad)
+            guard let account = try await BankAccountsService.shared.fetchAccount().first else {
+                print("Аккаунт не найден")
+                return
+            }
             self.balance = account.balance
             self.currency = Currency.from(code: account.currency)
             self.accountId = account.id
