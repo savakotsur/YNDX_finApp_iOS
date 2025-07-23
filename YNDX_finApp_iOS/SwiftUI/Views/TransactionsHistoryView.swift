@@ -11,6 +11,7 @@ struct TransactionsHistoryView: View {
     @State var vm: TransactionsViewModel
     var direction: Direction
     @Environment(\.dismiss) private var dismiss
+    @State private var selectedTransaction: Transaction?
     
     init(direction: Direction) {
         self.direction = direction
@@ -66,14 +67,13 @@ struct TransactionsHistoryView: View {
             }
             
             TransactionsSectionView(
-                onFinishEditing: {
-                    Task {
-                        await vm.fetchTransactions()
-                    }
-                }, transactions: vm.transactions,
+                transactions: vm.transactions,
                 isOutcome: true,
                 getEmoji: { vm.getEmoji(for: $0) },
-                getCategoryName: { vm.getCategoryName(for: $0) }
+                getCategoryName: { vm.getCategoryName(for: $0) },
+                onTap: { transaction in
+                    selectedTransaction = transaction
+                }
             )
         }
         .navigationTitle("Моя история")
@@ -102,5 +102,13 @@ struct TransactionsHistoryView: View {
             }
         }
         .navigationBarBackButtonHidden()
+        .fullScreenCover(item: $selectedTransaction) { transaction in
+            OperationView(direction: direction, transaction: transaction)
+                .onDisappear {
+                    Task {
+                        await vm.fetchTransactions()
+                    }
+                }
+        }
     }
 }

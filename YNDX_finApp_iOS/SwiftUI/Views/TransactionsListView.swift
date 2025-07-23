@@ -11,6 +11,7 @@ struct TransactionsListView: View {
     let direction: Direction
     @State var vm: TransactionsViewModel
     @State private var showCreateModal = false
+    @State private var selectedTransaction: Transaction?
     
     init(direction: Direction) {
         self.direction = direction
@@ -27,17 +28,15 @@ struct TransactionsListView: View {
                         Text("\(vm.totalAmount.groupedString) ₽")
                     }
                 }
-
+                
                 TransactionsSectionView(
-                    onFinishEditing: {
-                        Task {
-                            await vm.fetchTransactions()
-                        }
-                    }, transactions: vm.transactions,
+                    transactions: vm.transactions,
                     isOutcome: direction == .outcome,
                     getEmoji: { vm.getEmoji(for: $0) },
-                    getCategoryName: { vm.getCategoryName(for: $0) }
-                )
+                    getCategoryName: { vm.getCategoryName(for: $0) },
+                    onTap: { transaction in
+                        selectedTransaction = transaction
+                    })
             }
             .navigationTitle(direction == .income ? "Доходы сегодня" : "Расходы сегодня")
             .toolbar {
@@ -64,6 +63,14 @@ struct TransactionsListView: View {
             .padding()
             .fullScreenCover(isPresented: $showCreateModal) {
                 OperationView(direction: direction)
+                    .onDisappear {
+                        Task {
+                            await vm.fetchTransactions()
+                        }
+                    }
+            }
+            .fullScreenCover(item: $selectedTransaction) { transaction in
+                OperationView(direction: direction, transaction: transaction)
                     .onDisappear {
                         Task {
                             await vm.fetchTransactions()

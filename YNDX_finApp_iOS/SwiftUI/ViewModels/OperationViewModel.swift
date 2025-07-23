@@ -39,7 +39,7 @@ final class OperationViewModel {
         
         Task {
             await loadCategories()
-            accountId = try await BankAccountsService.shared.fetchAccount().id
+            accountId = try await BankAccountsService.shared.fetchAccount().first?.id
         }
     }
     
@@ -85,14 +85,14 @@ final class OperationViewModel {
         let normalized = amountString.replacingOccurrences(of: ",", with: ".")
         let amount = Decimal(string: normalized) ?? 0
         let transaction = Transaction(
-            id: transactionId ?? Int(Date().timeIntervalSince1970),
+            id: transactionId ?? 0, // 0 для создания новой транзакции
             accountId: accountId ?? 1,
             categoryId: selectedCategoryId!,
             amount: amount,
             transactionDate: date,
             comment: comment.isEmpty ? nil : comment,
-            createdAt: date,
-            updatedAt: date
+            createdAt: Date(timeIntervalSince1970: 0), // нулевая дата для создания
+            updatedAt: Date(timeIntervalSince1970: 0)  // нулевая дата для создания
         )
         
         do {

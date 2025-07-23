@@ -60,7 +60,7 @@ struct OperationView: View {
                     }
                     
                     DatePicker("Дата", selection: $viewModel.date, in: ...Date(), displayedComponents: .date)
-
+                    
                     DatePicker("Время", selection: $viewModel.date, in: ...Date(), displayedComponents: .hourAndMinute)
                     
                     ZStack(alignment: .topLeading) {
@@ -78,10 +78,11 @@ struct OperationView: View {
                         Button("Удалить \(direction == .income ? "доход" : "расход")") {
                             Task {
                                 await viewModel.delete()
-                                if !viewModel.showAlert {
-                                    dismiss()
-                                    onDismiss?()
-                                }
+                            }
+                            
+                            if !viewModel.showAlert {
+                                dismiss()
+                                onDismiss?()
                             }
                         }
                         .foregroundColor(.red)

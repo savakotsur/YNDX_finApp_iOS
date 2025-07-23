@@ -21,6 +21,15 @@ enum Currency: String, CaseIterable, Identifiable {
         case .eur: return "Евро €"
         }
     }
+    
+    static func from(code: String) -> Currency {
+        switch code.uppercased() {
+        case "RUB": return .rub
+        case "USD": return .usd
+        case "EUR": return .eur
+        default: return .rub
+        }
+    }
 }
 
 @Observable
@@ -31,6 +40,7 @@ class AccountViewModel {
     var showCurrencyPicker: Bool = false
     var isBalanceHidden: Bool = false
     var balanceInput: String = ""
+    var accountId: Int = 1
     
     var currencies: [Currency] { Currency.allCases }
     
@@ -39,11 +49,26 @@ class AccountViewModel {
         currency = newCurrency
     }
     
-    func save() {
+    func save() async {
         if let value = Int(balanceInput) {
             balance = Decimal(value)
         }
         isEditing = false
+        
+        // Отправляем обновление на сервер
+        do {
+            let updatedAccount = BankAccount(
+                id: accountId,
+                name: "Main Account",
+                balance: balance,
+                currency: currency.rawValue,
+                createdAt: Date(),
+                updatedAt: Date()
+            )
+            try await BankAccountsService.shared.updateAccount(updatedAccount)
+        } catch {
+            print("Ошибка обновления аккаунта: \(error)")
+        }
     }
     
     func startEditing() {
@@ -74,6 +99,22 @@ class AccountViewModel {
     }
     
     func refresh() {
-        //MARK: логика обновления будет здесь
+        Task {
+            await loadAccount()
+        }
+    }
+    
+    func loadAccount(id: Int? = nil) async {
+        do {
+            guard let account = try await BankAccountsService.shared.fetchAccount().first else {
+                print("Аккаунт не найден")
+                return
+            }
+            self.balance = account.balance
+            self.currency = Currency.from(code: account.currency)
+            self.accountId = account.id
+        } catch {
+            print("Ошибка загрузки аккаунта: \(error)")
+        }
     }
 }
