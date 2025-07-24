@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 @Observable
 final class TransactionsViewModel {
@@ -51,6 +52,16 @@ final class TransactionsViewModel {
     }
     
     private func loadTransactions() async {
+        await MainActor.run {
+                LoadingOverlay.shared.show()
+        }
+
+        defer {
+            Task { @MainActor in
+                LoadingOverlay.shared.hide()
+            }
+        }
+        
         let calendar = Calendar.current
         
         let startOfDay = calendar.startOfDay(for: startDate)

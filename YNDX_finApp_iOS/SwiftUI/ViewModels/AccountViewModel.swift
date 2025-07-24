@@ -105,6 +105,16 @@ class AccountViewModel {
     }
     
     func loadAccount(id: Int? = nil) async {
+        await MainActor.run {
+                LoadingOverlay.shared.show()
+        }
+
+        defer {
+            Task { @MainActor in
+                LoadingOverlay.shared.hide()
+            }
+        }
+
         do {
             guard let account = try await BankAccountsService.shared.fetchAccount().first else {
                 print("Аккаунт не найден")
