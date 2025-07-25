@@ -146,19 +146,23 @@ class AccountViewModel {
 
             for transaction in transactions {
                 guard let category = categories.first(where: { $0.id == transaction.categoryId }) else { continue }
-                let date = calendar.startOfDay(for: transaction.createdAt)
-                let signedAmount = category.direction == .income ? -transaction.amount : transaction.amount
+                let date = calendar.startOfDay(for: transaction.transactionDate)
+                let signedAmount = category.direction == .income ? transaction.amount * -1 : transaction.amount
                 grouped[date, default: 0] += signedAmount
             }
 
             var result: [ChartData] = []
             var runningBalance = balance
 
-            for offset in (0..<30).reversed() {
+            for offset in 0..<30 {
                 guard let date = calendar.date(byAdding: .day, value: -offset, to: today) else { continue }
                 result.append(ChartData(date: date, balance: runningBalance))
-                runningBalance -= grouped[date, default: 0]
+
+                let transactionSum = grouped[date, default: 0]
+                runningBalance += transactionSum
             }
+
+            result.reverse()
 
             let safeResult = result
             await MainActor.run {

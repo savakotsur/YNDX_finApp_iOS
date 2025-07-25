@@ -62,14 +62,9 @@ final class TransactionsViewModel {
             }
         }
         
-        let calendar = Calendar.current
-        
-        let startOfDay = calendar.startOfDay(for: startDate)
-        let endOfDay = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: calendar.startOfDay(for: endDate)) ?? endDate
-        
         do {
-            let accountID = try await BankAccountsService.shared.fetchAccount().first?.id ?? 95
-            let allTransactions = try await TransactionsService.shared.transactions(from: startOfDay, to: endOfDay, accountId: accountID)
+            let accountID = try await BankAccountsService.shared.fetchAccount().first?.id ?? 99
+            let allTransactions = try await TransactionsService.shared.transactions(from: startDate, to: endDate, accountId: accountID)
             matchingCategories = try await CategoriesService.shared.categories(direction: direction)
             let matchingCategoryIds = Set(matchingCategories.map { $0.id })
             transactions = allTransactions.filter { matchingCategoryIds.contains($0.categoryId) }

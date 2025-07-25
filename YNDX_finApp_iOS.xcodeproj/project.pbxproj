@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E20620F42E344CBE00FEA12C /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = E20620F32E344CBE00FEA12C /* Lottie */; };
 		E239EF032E32F2DC0084B8F8 /* PieChart in Frameworks */ = {isa = PBXBuildFile; productRef = E239EF022E32F2DC0084B8F8 /* PieChart */; };
 		E239EF062E32F6980084B8F8 /* PieChart in Frameworks */ = {isa = PBXBuildFile; productRef = E239EF052E32F6980084B8F8 /* PieChart */; };
 		E239EF092E32F7390084B8F8 /* PieChart in Frameworks */ = {isa = PBXBuildFile; productRef = E239EF082E32F7390084B8F8 /* PieChart */; };
@@ -69,6 +70,7 @@
 				E29FFBC62E33002200D57C74 /* PieChart in Frameworks */,
 				E29FFBC32E32FF5F00D57C74 /* PieChart in Frameworks */,
 				E239EF032E32F2DC0084B8F8 /* PieChart in Frameworks */,
+				E20620F42E344CBE00FEA12C /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,6 +138,7 @@
 				E239EF0D2E32FE390084B8F8 /* PieChart */,
 				E29FFBC22E32FF5F00D57C74 /* PieChart */,
 				E29FFBC52E33002200D57C74 /* PieChart */,
+				E20620F32E344CBE00FEA12C /* Lottie */,
 			);
 			productName = YNDX_finApp_iOS;
 			productReference = E2C4F3E12DFC646E0003631C /* YNDX_finApp_iOS.app */;
@@ -221,6 +224,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				E29FFBC42E33002200D57C74 /* XCLocalSwiftPackageReference "Utilities" */,
+				E20620F22E344CBE00FEA12C /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E2C4F3E22DFC646E0003631C /* Products */;
@@ -595,7 +599,23 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		E20620F22E344CBE00FEA12C /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		E20620F32E344CBE00FEA12C /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E20620F22E344CBE00FEA12C /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
 		E239EF022E32F2DC0084B8F8 /* PieChart */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PieChart;
