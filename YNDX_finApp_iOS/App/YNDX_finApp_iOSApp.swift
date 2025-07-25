@@ -9,9 +9,17 @@ import SwiftUI
 
 @main
 struct YNDX_finApp_iOSApp: App {
+    @State private var isSplashFinished = false
+
     var body: some Scene {
         WindowGroup {
-            TabBarView()
+            if isSplashFinished {
+                TabBarView()
+            } else {
+                SplashScreen {
+                    isSplashFinished = true
+                }
+            }
         }
     }
 }

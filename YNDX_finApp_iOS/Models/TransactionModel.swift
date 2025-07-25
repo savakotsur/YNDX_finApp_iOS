@@ -35,7 +35,7 @@ struct Transaction: Codable {
         // Обработка дат как строк
         if let transactionDateString = try? container.decode(String.self, forKey: .transactionDate) {
             let formatter = ISO8601DateFormatter()
-            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            formatter.formatOptions = [.withInternetDateTime]
             transactionDate = formatter.date(from: transactionDateString) ?? Date()
         } else {
             transactionDate = try container.decode(Date.self, forKey: .transactionDate)

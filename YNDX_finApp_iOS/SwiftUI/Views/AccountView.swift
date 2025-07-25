@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UIKit
+import Charts
 
 struct AccountView: View {
     @State
@@ -90,6 +91,26 @@ struct AccountView: View {
                     Button("Отмена", role: .cancel) { }
                         .foregroundStyle(.toolbarAccent)
                 }
+                if !viewModel.isEditing {
+                    Chart {
+                        ForEach(viewModel.chartData, id: \.date) { point in
+                            BarMark(
+                                x: .value("Дата", point.date, unit: .day),
+                                y: .value("Баланс", point.balance)
+                            )
+                            .foregroundStyle(point.balance.sign == .minus ? .red : .green)
+                        }
+                    }
+                    .chartXAxis {
+                        AxisMarks(preset: .aligned, values: .automatic) { value in
+                            AxisValueLabel(format: .dateTime.day().month(.abbreviated), centered: true)
+                        }
+                    }
+                    .chartYAxis(.hidden)
+                    .padding(.vertical, 20)
+                    .padding(.horizontal)
+                    .frame(minHeight: 250)
+                }
                 Spacer()
             }
         }
@@ -105,6 +126,9 @@ struct AccountView: View {
             if viewModel.isEditing {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
+                        withAnimation {
+                            viewModel.stopEditing()
+                        }
                         Task {
                             await viewModel.save()
                         }

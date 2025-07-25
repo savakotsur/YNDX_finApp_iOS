@@ -6,6 +6,17 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		E20620F42E344CBE00FEA12C /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = E20620F32E344CBE00FEA12C /* Lottie */; };
+		E239EF032E32F2DC0084B8F8 /* PieChart in Frameworks */ = {isa = PBXBuildFile; productRef = E239EF022E32F2DC0084B8F8 /* PieChart */; };
+		E239EF062E32F6980084B8F8 /* PieChart in Frameworks */ = {isa = PBXBuildFile; productRef = E239EF052E32F6980084B8F8 /* PieChart */; };
+		E239EF092E32F7390084B8F8 /* PieChart in Frameworks */ = {isa = PBXBuildFile; productRef = E239EF082E32F7390084B8F8 /* PieChart */; };
+		E239EF0C2E32FDF20084B8F8 /* PieChart in Frameworks */ = {isa = PBXBuildFile; productRef = E239EF0B2E32FDF20084B8F8 /* PieChart */; };
+		E239EF0E2E32FE390084B8F8 /* PieChart in Frameworks */ = {isa = PBXBuildFile; productRef = E239EF0D2E32FE390084B8F8 /* PieChart */; };
+		E29FFBC32E32FF5F00D57C74 /* PieChart in Frameworks */ = {isa = PBXBuildFile; productRef = E29FFBC22E32FF5F00D57C74 /* PieChart */; };
+		E29FFBC62E33002200D57C74 /* PieChart in Frameworks */ = {isa = PBXBuildFile; productRef = E29FFBC52E33002200D57C74 /* PieChart */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		E2C4F3EF2DFC64700003631C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +63,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E239EF0C2E32FDF20084B8F8 /* PieChart in Frameworks */,
+				E239EF062E32F6980084B8F8 /* PieChart in Frameworks */,
+				E239EF0E2E32FE390084B8F8 /* PieChart in Frameworks */,
+				E239EF092E32F7390084B8F8 /* PieChart in Frameworks */,
+				E29FFBC62E33002200D57C74 /* PieChart in Frameworks */,
+				E29FFBC32E32FF5F00D57C74 /* PieChart in Frameworks */,
+				E239EF032E32F2DC0084B8F8 /* PieChart in Frameworks */,
+				E20620F42E344CBE00FEA12C /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +131,14 @@
 			);
 			name = YNDX_finApp_iOS;
 			packageProductDependencies = (
+				E239EF022E32F2DC0084B8F8 /* PieChart */,
+				E239EF052E32F6980084B8F8 /* PieChart */,
+				E239EF082E32F7390084B8F8 /* PieChart */,
+				E239EF0B2E32FDF20084B8F8 /* PieChart */,
+				E239EF0D2E32FE390084B8F8 /* PieChart */,
+				E29FFBC22E32FF5F00D57C74 /* PieChart */,
+				E29FFBC52E33002200D57C74 /* PieChart */,
+				E20620F32E344CBE00FEA12C /* Lottie */,
 			);
 			productName = YNDX_finApp_iOS;
 			productReference = E2C4F3E12DFC646E0003631C /* YNDX_finApp_iOS.app */;
@@ -195,6 +222,10 @@
 			);
 			mainGroup = E2C4F3D82DFC646E0003631C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				E29FFBC42E33002200D57C74 /* XCLocalSwiftPackageReference "Utilities" */,
+				E20620F22E344CBE00FEA12C /* XCRemoteSwiftPackageReference "lottie-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E2C4F3E22DFC646E0003631C /* Products */;
 			projectDirPath = "";
@@ -560,6 +591,60 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		E29FFBC42E33002200D57C74 /* XCLocalSwiftPackageReference "Utilities" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Utilities;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E20620F22E344CBE00FEA12C /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E20620F32E344CBE00FEA12C /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E20620F22E344CBE00FEA12C /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+		E239EF022E32F2DC0084B8F8 /* PieChart */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PieChart;
+		};
+		E239EF052E32F6980084B8F8 /* PieChart */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PieChart;
+		};
+		E239EF082E32F7390084B8F8 /* PieChart */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PieChart;
+		};
+		E239EF0B2E32FDF20084B8F8 /* PieChart */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PieChart;
+		};
+		E239EF0D2E32FE390084B8F8 /* PieChart */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PieChart;
+		};
+		E29FFBC22E32FF5F00D57C74 /* PieChart */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PieChart;
+		};
+		E29FFBC52E33002200D57C74 /* PieChart */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PieChart;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E2C4F3D92DFC646E0003631C /* Project object */;
 }
