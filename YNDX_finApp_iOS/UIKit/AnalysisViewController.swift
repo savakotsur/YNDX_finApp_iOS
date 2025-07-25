@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import PieChart
 
 class AnalysisViewController: UIViewController {
     let direction: Direction
@@ -252,15 +253,66 @@ extension AnalysisViewController: UITableViewDataSource, UITableViewDelegate {
         }
         return nil
     }
-    
+
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if section == 1 {
+            return 260 // Высота графика + отступы
+        }
         return UITableView.automaticDimension
+    }
+
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if section == 1 {
+            let headerView = UIView()
+            let chartView = PieChartView()
+            chartView.translatesAutoresizingMaskIntoConstraints = false
+            headerView.addSubview(chartView)
+
+            NSLayoutConstraint.activate([
+                chartView.topAnchor.constraint(equalTo: headerView.topAnchor, constant: 8),
+                chartView.bottomAnchor.constraint(equalTo: headerView.bottomAnchor, constant: -8),
+                chartView.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
+                chartView.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
+                chartView.heightAnchor.constraint(equalToConstant: 240)
+            ])
+
+            let sum = filteredTransactions.reduce(0) { $0 + $1.amount }
+            let entities = generateEntities(from: filteredTransactions, total: sum)
+            chartView.entities = entities
+
+            return headerView
+        }
+        return nil
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard indexPath.section == 1 else { return }
         let transaction = filteredTransactions[indexPath.row]
         onSelectTransaction?(transaction)
+    }
+    
+    private func generateEntities(from transactions: [Transaction], total: Decimal) -> [Entity] {
+        let grouped = Dictionary(grouping: transactions, by: { $0.categoryId })
+        let sorted = grouped
+            .map { (key, value) -> (Category?, Decimal) in
+                let category = category(for: key)
+                let total = value.reduce(0) { $0 + $1.amount }
+                return (category, total)
+            }
+            .sorted { $0.1 > $1.1 }
+
+        let top5 = sorted.prefix(5)
+        let others = sorted.dropFirst(5)
+
+        var result: [Entity] = top5.compactMap {
+            guard let name = $0.0?.name else { return nil }
+            return Entity(value: $0.1, label: name)
+        }
+        let othersSum = others.reduce(0) { $0 + $1.1 }
+        if othersSum > 0 {
+            result.append(Entity(value: othersSum, label: "Остальные"))
+        }
+        return result
     }
 }
 
@@ -436,6 +488,30 @@ class OperationCell: UITableViewCell {
         percentLabel.text = String(format: "%.1f%%", percentage * 100)
     }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class PieChartCell: UITableViewCell {
+    let chartView = PieChartView()
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        selectionStyle = .none
+
+        chartView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(chartView)
+
+        NSLayoutConstraint.activate([
+            chartView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            chartView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+            chartView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            chartView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            chartView.heightAnchor.constraint(equalToConstant: 240)
+        ])
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

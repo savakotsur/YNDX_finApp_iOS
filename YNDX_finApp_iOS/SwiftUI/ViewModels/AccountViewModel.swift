@@ -41,6 +41,7 @@ class AccountViewModel {
     var isBalanceHidden: Bool = false
     var balanceInput: String = ""
     var accountId: Int = 1
+    var chartData: [ChartData] = []
     
     var currencies: [Currency] { Currency.allCases }
     
@@ -49,11 +50,14 @@ class AccountViewModel {
         currency = newCurrency
     }
     
+    func stopEditing() {
+        isEditing = false
+    }
+    
     func save() async {
         if let value = Int(balanceInput) {
             balance = Decimal(value)
         }
-        isEditing = false
         
         // Отправляем обновление на сервер
         do {
@@ -89,18 +93,19 @@ class AccountViewModel {
     }
     
     func pasteBalance(_ text: String) {
-        let filtered = text.filter { "0123456789.,".contains($0) }
+        let filtered = text.filter { "0123456789.,-".contains($0) }
         balanceInput = filtered.replacingOccurrences(of: ",", with: ".")
     }
     
     func updateBalanceInput(_ text: String) {
-        let filtered = text.filter { "0123456789.,".contains($0) }
+        let filtered = text.filter { "0123456789.,-".contains($0) }
         balanceInput = filtered.replacingOccurrences(of: ",", with: ".")
     }
     
     func refresh() {
         Task {
             await loadAccount()
+            await loadChartData()
         }
     }
     
@@ -127,4 +132,46 @@ class AccountViewModel {
             print("Ошибка загрузки аккаунта: \(error)")
         }
     }
+    
+    func loadChartData() async {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        guard let startDate = calendar.date(byAdding: .day, value: -29, to: today) else { return }
+
+        do {
+            let categories = try await CategoriesService.shared.categories()
+            let transactions = try await TransactionsService.shared.transactions(from: startDate, to: today, accountId: accountId)
+
+            var grouped: [Date: Decimal] = [:]
+
+            for transaction in transactions {
+                guard let category = categories.first(where: { $0.id == transaction.categoryId }) else { continue }
+                let date = calendar.startOfDay(for: transaction.createdAt)
+                let signedAmount = category.direction == .income ? -transaction.amount : transaction.amount
+                grouped[date, default: 0] += signedAmount
+            }
+
+            var result: [ChartData] = []
+            var runningBalance = balance
+
+            for offset in (0..<30).reversed() {
+                guard let date = calendar.date(byAdding: .day, value: -offset, to: today) else { continue }
+                result.append(ChartData(date: date, balance: runningBalance))
+                runningBalance -= grouped[date, default: 0]
+            }
+
+            let safeResult = result
+            await MainActor.run {
+                self.chartData = safeResult
+            }
+        } catch {
+            print("Ошибка загрузки данных графика: \(error)")
+        }
+    }
+}
+
+struct ChartData: Identifiable {
+    let id = UUID()
+    let date: Date
+    let balance: Decimal
 }
